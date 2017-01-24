@@ -28,10 +28,15 @@ class Environment:
                     _key, old_value = line.strip().split('=')
                     if key == _key:
                         found = True
+                        # Keep quotes
+                        if old_value[0] == old_value[-1] == '"':
+                            value = '"' + value + '"'
                         if value is None:
                             new_line = '# ' + key + '=' + str(old_value) + '\n'
                         else:
                             new_line = key + '=' + str(value) + '\n'
+                if not new_line.endswith('\n'):
+                    new_line += '\n'
                 environment_file.write(new_line)
 
             if not found:
@@ -53,4 +58,4 @@ class Environment:
             open(self.file_path, 'w').close()
 
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'

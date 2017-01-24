@@ -11,6 +11,8 @@ class EnvironmentTestCase(TestCase):
     def setUp(self):
         self.dot_env = tempfile.NamedTemporaryFile()
         self.dot_env.write(b'k=v')
+        self.dot_env.write(b'\n')
+        self.dot_env.write(b'q="b"')
         self.dot_env.seek(0)
 
     def test_backup_file(self):
@@ -31,19 +33,26 @@ class EnvironmentTestCase(TestCase):
         env['k'] = 'nv'
 
         self.dot_env.seek(0)
-        self.assertEqual(self.dot_env.read().decode(), 'k=nv\n')
+        self.assertEqual(self.dot_env.read().decode(), 'k=nv\nq="b"\n')
 
         env['nk'] = 'v'
 
         self.dot_env.seek(0)
-        self.assertEqual(self.dot_env.read().decode(), 'k=nv\nnk=v\n')
+        self.assertEqual(self.dot_env.read().decode(), 'k=nv\nq="b"\nnk=v\n')
+
+        # Keep quotes(")
+        env['q'] = 'nb'
+
+        self.dot_env.seek(0)
+        self.assertEqual(self.dot_env.read().decode(), 'k=nv\nq="nb"\nnk=v\n')
 
     def test_load_environment(self):
         env = Environment(self.dot_env.name)
 
         result = env.load_environment()
 
-        self.assertEqual(result, ['k=v'])
+        self.assertEqual(result[0], 'k=v\n')
+        self.assertEqual(result[1], 'q="b"')
 
     def test_skip_if_key_not_equal(self):
         self.dot_env.seek(0)
