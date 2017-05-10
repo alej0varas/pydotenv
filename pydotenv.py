@@ -6,7 +6,13 @@ import os
 class Environment:
     DEFAULT_FILE_PATH = '.env'
 
-    def __init__(self, file_path=DEFAULT_FILE_PATH):
+    def __init__(self, file_path=DEFAULT_FILE_PATH, check_file_exists=False):
+        if not os.path.isfile(file_path):
+            if check_file_exists:
+                raise OSError("File does not exist(" + file_path + ")")
+            # If it doesn't exists we create it.
+            open(file_path, 'w').close()
+
         self.file_path = file_path
         self.backup_file()
 
@@ -57,15 +63,10 @@ class Environment:
         return open(self.file_path, mode)
 
     def backup_file(self):
-        self.validate_file_path()
         tmp_file = tempfile.NamedTemporaryFile(prefix='env-')
         tmp_file.close()
         self.backup_file_name = tmp_file.name
         shutil.copyfile(self.file_path, self.backup_file_name)
 
-    def validate_file_path(self):
-        if not os.path.isfile(self.file_path):
-            open(self.file_path, 'w').close()
 
-
-__version__ = '0.0.5'
+__version__ = '0.0.6'
