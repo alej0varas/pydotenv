@@ -87,3 +87,10 @@ class EnvironmentTestCase(TestCase):
         self.assertIn(b'# ckv\n', self.dot_env.read())
         self.dot_env.seek(0)
         self.assertIn(b'ck=nv', self.dot_env.read())
+
+    def test_items(self):
+        env = Environment(self.dot_env.name)
+
+        result = env.items()
+
+        self.assertEqual(result, [('k', 'v'), ('q', '"b"')])

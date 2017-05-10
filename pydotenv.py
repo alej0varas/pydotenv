@@ -13,6 +13,16 @@ class Environment:
     def __setitem__(self, name, value):
         self.save_environment(name, value)
 
+    def items(self):
+        environment = self.load_environment()
+        result = []
+        for line in environment:
+            if '=' in line and '#' not in line:
+                key, value = line.split('=')
+                value = value.strip()
+                result.append((key, value))
+        return result
+
     def load_environment(self):
         with self.get_environment_file('r') as environment_file:
             environment = environment_file.readlines()
@@ -58,4 +68,4 @@ class Environment:
             open(self.file_path, 'w').close()
 
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
