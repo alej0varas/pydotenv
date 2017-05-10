@@ -17,7 +17,7 @@ class Environment:
         environment = self.load_environment()
         result = []
         for line in environment:
-            if '=' in line and '#' not in line:
+            if '=' in line and not line.strip().startswith('#'):
                 key, value = line.split('=')
                 value = value.strip()
                 result.append((key, value))
@@ -68,4 +68,4 @@ class Environment:
             open(self.file_path, 'w').close()
 
 
-__version__ = '0.0.3'
+__version__ = '0.0.4'
