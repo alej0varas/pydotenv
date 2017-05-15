@@ -16,9 +16,18 @@ class Environment:
         self.file_path = file_path
         self.backup_file()
 
+    def __getitem__(self, key):
+        return dict(self.items())[key]
+
     def __setitem__(self, name, value):
         self.save_environment(name, value)
 
+    def get(self, key, default=''):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+        
     def items(self):
         environment = self.load_environment()
         result = []
@@ -69,4 +78,4 @@ class Environment:
         shutil.copyfile(self.file_path, self.backup_file_name)
 
 
-__version__ = '0.0.6'
+__version__ = '0.0.7'
